@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1] — 2026-07-27
+
+### Corrigido
+- fix: **detecção de soft-block de DM** — `criar_thread` voltando 403 genérico ("Ocorreu um erro. Tente novamente") ou 200 sem `thread_v2_id` agora loga o status HTTP + trecho do corpo (era `None` silencioso, sem motivo) e **para o run após 6 falhas seguidas**, em vez de martelar a lista inteira e piorar o bloqueio
+
+### Documentação
+- docs: README documenta a parada por 403/soft-block após 6 falhas de thread
+
 ## [1.1.0] — 2026-07-22
 
 ### Adicionado

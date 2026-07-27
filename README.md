@@ -56,6 +56,12 @@ aleatório) pra variar o texto e reduzir flag de spam. **Varie bastante.**
 Kill-switch: qualquer bloqueio (`feedback_required`/`spam`/429/HTML) **para o run** e
 imprime o saldo (enviadas / puladas). Erro detalhado vai pra `output/logs/`.
 
+Alguns action-blocks não vêm num sinal estruturado — o IG responde `criar_thread` com
+403 genérico ("Ocorreu um erro. Tente novamente") ou 200 sem `thread_v2_id`. Esses
+casos são logados com o status HTTP + trecho do corpo (pra ver o motivo real) e, se
+acontecerem **6 vezes seguidas**, o run **para limpo** em vez de martelar a lista
+inteira e piorar o bloqueio.
+
 ## Arquivos
 | Arquivo | Papel |
 |---------|-------|

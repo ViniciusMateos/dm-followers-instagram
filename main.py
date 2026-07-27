@@ -235,6 +235,7 @@ def run(dry=False, start_from=None, start_oldest=False, debug=False, ignorar_jan
 
             total = len(candidatos)
             progresso(0, total, "iniciando")
+            falhas_thread = 0   # criar_thread falhando EM SÉRIE = soft-block de DM → para de martelar
             for i, c in enumerate(candidatos):
                 progresso(i, total, f"@{c['username']}")
                 guard.pode_enviar()
@@ -247,8 +248,15 @@ def run(dry=False, start_from=None, start_oldest=False, debug=False, ignorar_jan
                 guard.dormir(config.DELAY_ACAO_UI, "preparando")
                 thread = ig.criar_thread(c["pk"])
                 if not thread:
-                    log.warning("! não consegui abrir thread com @%s — pulando", c["username"])
+                    falhas_thread += 1
+                    log.warning("! não consegui abrir thread com @%s — pulando (%d seguidas)",
+                                c["username"], falhas_thread)
+                    if falhas_thread >= 6:
+                        raise BloqueioDetectado(
+                            "6 threads falharam seguidas ao criar — provável soft-block de DM na "
+                            "conta. Parando pra não piorar; deixe a conta descansar uns dias.")
                     continue
+                falhas_thread = 0   # criou a thread → zera o contador
                 # VERIFICAÇÃO DUPLA: olha DENTRO da conversa. Se a NOSSA DM já está lá, NÃO
                 # remanda — blindagem contra state zerado/errado (foi o que remandou pra todos).
                 if ig.ja_mandou_msg(thread, config.MARCA_TEMPLATE):

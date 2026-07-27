@@ -320,8 +320,16 @@ class IG:
             try:
                 res = self.page.evaluate(JS_CREATE_THREAD, {**self._base(), "pk": str(pk)})
                 checar_bloqueio(res["status"], res["text"])
-                j = _parse_json(res["text"])
-                return j.get("thread_v2_id") or (j.get("thread") or {}).get("thread_v2_id")
+                txt = (res.get("text") or "").strip()
+                if not txt:
+                    log.warning("  ~ criar_thread: HTTP %s corpo VAZIO (soft-block de DM?)", res["status"])
+                    return None
+                j = _parse_json(txt)
+                tid = j.get("thread_v2_id") or (j.get("thread") or {}).get("thread_v2_id")
+                if not tid:   # 200 sem o id = assinatura de soft-block; loga pra a gente VER
+                    log.warning("  ~ criar_thread: HTTP %s sem thread_v2_id (soft-block?) — %s",
+                                res["status"], txt[:80])
+                return tid
             except Exception as e:
                 m = str(e).lower()
                 # transitório = página assentando (visita de perfil que estourou) OU proxy/rede

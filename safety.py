@@ -62,6 +62,21 @@ def fmt_tempo(segundos):
     return f"{m}m {s}s" if s else f"{m}m"
 
 
+def _dormir_contando(t, motivo=""):
+    """Dorme `t` segundos. Em pausas longas (>15s) emite [espera] a cada ~12s com o tempo
+    restante → app/Live Activity mostram a contagem regressiva ('faltam Xm Ys')."""
+    if t <= 15:
+        time.sleep(t)
+        return
+    fim = time.monotonic() + t
+    while True:
+        restam = fim - time.monotonic()
+        if restam <= 0.5:
+            break
+        print(f"[espera] {int(round(restam))} {motivo}".rstrip(), flush=True)
+        time.sleep(min(restam, 12))
+
+
 # ────────────────────────── exceções ───────────────────────────
 class BloqueioDetectado(Exception):
     """Instagram sinalizou ação bloqueada / checkpoint / spam."""
@@ -226,4 +241,4 @@ class Guard:
             log.info("[dry-run] dormiria %s (%s)", fmt_tempo(t), motivo)
             return
         log.info("dormindo %s (%s)", fmt_tempo(t), motivo)
-        time.sleep(t)
+        _dormir_contando(t, motivo)

@@ -147,6 +147,7 @@ class IG:
             else:
                 raise
         self.page = self.ctx.pages[0] if self.ctx.pages else self.ctx.new_page()
+        self.page.set_default_timeout(20000)   # ação do Playwright falha em 20s em vez de pendurar
         self._restaurar_sessao()   # o perfil não guarda cookie; a sessão vem do arquivo
         return self
 

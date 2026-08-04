@@ -32,6 +32,7 @@ import config
 import perfis
 from safety import State, Guard, log, BloqueioDetectado, LimiteAtingido
 from ig import IG
+from humano import pausa_humana
 
 LOGS_ERRO_DIR = os.path.join(config.OUTPUT_DIR, "logs")
 
@@ -276,6 +277,15 @@ def run(dry=False, start_from=None, start_oldest=False, debug=False, ignorar_jan
                 guard.enviadas += 1
                 log.info("✓ DM enviada → @%s", c["username"])
                 guard.pos_dm()
+                # HUMANIZAÇÃO: a cada N DMs, sai e navega como gente (quebra o padrão de rajada).
+                # DM é tudo via API, então navegar no meio não atrapalha o envio seguinte.
+                if config.HUMANIZAR and config.PAUSA_CADA and i < len(candidatos) - 1:
+                    guard.acoes_desde_pausa = getattr(guard, "acoes_desde_pausa", 0) + 1
+                    alvo = getattr(guard, "proxima_pausa", 0) or config.PAUSA_CADA
+                    if guard.acoes_desde_pausa >= alvo:
+                        guard.acoes_desde_pausa = 0
+                        guard.proxima_pausa = random.randint(max(3, config.PAUSA_CADA - 2), config.PAUSA_CADA + 2)
+                        pausa_humana(ig, guard)
             progresso(total, total, "concluído")
         except LimiteAtingido as e:
             log.info("Parando (cap atingido): %s", e)

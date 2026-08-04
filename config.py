@@ -94,6 +94,10 @@ DELAY_ACAO_UI = (1.5, 4.0)  # dwell ao abrir perfil / conversa
 USAR_JANELA = False
 ACTIVE_HOURS = (9, 23)       # só vale se USAR_JANELA=True
 
+# ── Humanização: pausas navegando no meio do processo (quebra o padrão de rajada) ──
+HUMANIZAR = True             # a cada N DMs, sai e navega (feed/story/curtir) e volta
+PAUSA_CADA = 8               # nº de DMs entre uma pausa humana e outra (0 = desliga)
+
 # 1ª RUN: de qual seguidor começar (do mais antigo dele pro mais recente).
 # Depois disso ele salva o último e retoma sozinho (ignora este valor).
 COMECAR_DE = "n.mondra"

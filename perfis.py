@@ -28,6 +28,8 @@ PERFIL_PADRAO = {
     "pausa_longa": [120, 300],
     "delay_acao_ui": [1.5, 4.0],
     "active_hours": [9, 23],
+    "humanizar": True,           # pausas navegando no meio (quebra o padrão de rajada)
+    "pausa_cada": 8,             # a cada N DMs, dá uma pausa humana (0 = off)
 }
 
 _MODOS_BUILTIN = {
@@ -52,6 +54,7 @@ _MAP_CONFIG = {
     "delay_dm": "DELAY_DM", "pausa_longa_cada": "PAUSA_LONGA_CADA",
     "pausa_longa": "PAUSA_LONGA", "delay_acao_ui": "DELAY_ACAO_UI",
     "active_hours": "ACTIVE_HOURS",
+    "humanizar": "HUMANIZAR", "pausa_cada": "PAUSA_CADA",
 }
 
 

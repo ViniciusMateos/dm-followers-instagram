@@ -63,17 +63,21 @@ ASBD_ID = "359341"
 DOC_ACTIVITY = "26398841236455905"     # PolarisActivityFeedStoriesViewQuery (/graphql/query)
 DOC_DM_SEND = "26911679871773184"      # IGDirectTextSendMutation (/api/graphql)
 
-# ───────────────────── MENSAGEM ─────────────────────────────
-# {username} é trocado pelo nick do destinatário. (Mensagem fixa, sem variação.)
-# Ainda suporta spintax {a|b|c} se um dia quiser variar — mas aqui está fixa.
-MENSAGEM = (
-    "{username},\n\n"
-    "Siga o @brechoquasenadaa pra acompanhar os próximos drops!!\n\n"
-    "Primeira compra no brechó tem desconto de 10% em qualquer item!"
-)
+# ───────────────────── MENSAGENS ────────────────────────────
+# {username} é trocado pelo nick do destinatário. O bot SORTEIA uma dessas a cada envio —
+# rotacionar reduz o flag de "mensagem idêntica em massa" (o que mais queima no DM). Tom leve,
+# sem promo/desconto. Cada uma cita @brechoquasenadaa (é o CTA + a âncora anti-duplicata).
+# Ainda suporta spintax {a|b|c} em qualquer uma se quiser variar mais.
+MENSAGENS = [
+    "Fala {username}! Obrigado pelo follow. As novidades do brechó vão saindo no @brechoquasenadaa.",
+    "Opa {username}, valeu pelo follow! Vou postando as peças do brechó lá no @brechoquasenadaa.",
+    "E aí {username}, obrigado por seguir! Os garimpos vão caindo no @brechoquasenadaa.",
+    "Salve {username}! Valeu por acompanhar. As novidades do brechó saem no @brechoquasenadaa.",
+    "Fala {username}, obrigado pelo follow! Dá um pulo no @brechoquasenadaa pra ver o que tá rolando.",
+]
 
 # Âncora da VERIFICAÇÃO DUPLA: antes de enviar, o bot olha DENTRO da conversa e, se já tem
-# uma mensagem NOSSA contendo este trecho, NÃO remanda. É um pedaço FIXO do template (o @).
+# uma mensagem NOSSA contendo este trecho, NÃO remanda. É o @ (aparece em TODAS as variações).
 MARCA_TEMPLATE = "brechoquasenadaa"
 
 # ───────────────────── LIMITES DE SEGURANÇA ─────────────────

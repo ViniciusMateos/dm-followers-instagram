@@ -91,8 +91,9 @@ def modo_importar_cookies(path):
 
 
 def montar_mensagem(username):
-    """Troca {username} e resolve spintax {a|b|c} (escolhe um aleatório)."""
-    txt = config.MENSAGEM.replace("{username}", username)
+    """Sorteia uma das MENSAGENS, troca {username} e resolve spintax {a|b|c}. Rotacionar a
+    mensagem por envio corta o flag de 'mesma msg em massa' — o que mais queima o DM."""
+    txt = random.choice(config.MENSAGENS).replace("{username}", username)
     while re.search(r"\{[^{}]*\|[^{}]*\}", txt):
         txt = re.sub(r"\{([^{}]*\|[^{}]*)\}",
                      lambda m: random.choice(m.group(1).split("|")), txt, count=1)

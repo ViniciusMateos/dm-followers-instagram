@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0] — 2026-08-05
+
+### Adicionado
+- feat: **rotação de mensagens** — 5 variações mais suaves (sem apelo de desconto, sem emoji), sorteando por envio pra cortar o flag de "mesma mensagem em massa"
+- feat: **pausa humana intercalada** entre os DMs — no meio da leva sai, navega no feed (rola/curte) e volta, quebrando o padrão de rajada
+- feat: **contagem regressiva nas pausas** (marcador `[espera]`) no app/Live Activity + timeout defensivo do Playwright
+
 ## [1.1.2] — 2026-07-29
 
 ### Adicionado

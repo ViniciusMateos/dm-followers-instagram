@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.1] — 2026-09-17
+
+### Corrigido
+- fix: **busca dos novos seguidores** passou a usar o `/api/v1/news/inbox/` (o mesmo endpoint do app) — a query GraphQL `PolarisActivityFeedStoriesViewQuery` (`xdt_activity_inbox`) começou a voltar **vazia** na web (200, 0 stories) mesmo com follows novos aparecendo no celular, e o bot dizia "0 novos seguidores"; agora lê os `type=3` com `profile_id`/`profile_name`/`timestamp`
+
 ## [1.2.0] — 2026-08-05
 
 ### Adicionado

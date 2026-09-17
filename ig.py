@@ -382,32 +382,31 @@ class IG:
 
     # ─────────── operações ───────────
     def novos_seguidores(self):
-        """Lê a aba de notificações e devolve quem 'começou a seguir você',
-        do mais antigo pro mais novo: [{pk, username, timestamp}]."""
-        res = self.page.evaluate(JS_GRAPHQL, {
-            **self._base(), "endpoint": "/graphql/query",
-            "friendly": "PolarisActivityFeedStoriesViewQuery", "doc_id": config.DOC_ACTIVITY,
-            "variables": json.dumps({"inbox_request_data": {}, "pending_request_data": {}},
-                                    separators=(",", ":"))})
+        """Lê o news inbox (/api/v1/news/inbox/) e devolve quem 'começou a seguir você',
+        do mais antigo pro mais novo: [{pk, username, timestamp}].
+
+        Antes usava a query GraphQL PolarisActivityFeedStoriesViewQuery (xdt_activity_inbox),
+        mas o IG passou a devolver esse inbox VAZIO na web (200, new/old_stories=[]) mesmo com
+        follows novos aparecendo no app. O /api/v1/news/inbox/ (o MESMO endpoint que o app usa)
+        traz os follows: cada story type=3 tem args.profile_id (pk), args.profile_name (username)
+        e args.timestamp (epoch). Confirmado 16/09/2026: 100 follows aqui vs 0 no graphql."""
+        res = self.page.evaluate(JS_API_GET, {**self._base(), "url": "/api/v1/news/inbox/"})
         checar_bloqueio(res["status"], res["text"])
         data = _parse_json(res["text"])
-        try:
-            inbox = data["data"]["xdt_activity_inbox"]
-        except (KeyError, TypeError):
-            log.error("Feed de atividades em formato inesperado. Rode com --debug.")
-            return []
-        stories = (inbox.get("new_stories") or []) + (inbox.get("old_stories") or [])
+        stories = (data.get("new_stories") or []) + (data.get("old_stories") or [])
         out = []
         for s in stories:
             if s.get("type") != 3:                      # 3 = "começou a seguir você"
                 continue
             args = s.get("args") or {}
-            users = args.get("users") or []
-            if not users:
+            pk = str(args.get("profile_id") or "")
+            if not pk:                                  # fallback: inline_follow.user_info
+                uinfo = (args.get("inline_follow") or {}).get("user_info") or {}
+                pk = str(uinfo.get("pk") or uinfo.get("id") or "")
+            if not pk:
                 continue
-            u = users[0]
-            out.append({"pk": str(u.get("pk") or u.get("id")),
-                        "username": u.get("username", "?"),
+            out.append({"pk": pk,
+                        "username": args.get("profile_name") or "?",
                         "timestamp": float(args.get("timestamp") or 0)})
         out.sort(key=lambda x: x["timestamp"])          # antigo -> novo
         return out

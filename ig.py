@@ -427,7 +427,17 @@ class IG:
                 if not txt:
                     log.warning("  ~ criar_thread: HTTP %s corpo VAZIO (soft-block de DM?)", res["status"])
                     return None
-                j = _parse_json(txt)
+                try:
+                    j = _parse_json(txt)
+                except ValueError:
+                    # corpo NÃO-JSON (HTML/erro/garbage do IG) = mesma assinatura de soft-block do
+                    # corpo vazio. NÃO é fatal: pula essa pessoa (retorna None) em vez de derrubar o
+                    # run inteiro. (Era o "erro inesperado — parando o run: Expecting value ..." que
+                    # matava o DM na 2ª/3ª pessoa.) JSONDecodeError é subclasse de ValueError.
+                    log.warning("  ~ criar_thread: HTTP %s corpo não-JSON (soft-block de DM?) — %s",
+                                res["status"], txt[:80])
+                    return None
+                j = j if isinstance(j, dict) else {}
                 tid = j.get("thread_v2_id") or (j.get("thread") or {}).get("thread_v2_id")
                 if not tid:   # 200 sem o id = assinatura de soft-block; loga pra a gente VER
                     log.warning("  ~ criar_thread: HTTP %s sem thread_v2_id (soft-block?) — %s",

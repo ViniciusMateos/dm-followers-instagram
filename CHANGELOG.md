@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.2] — 2026-09-22
+
+### Corrigido
+- fix: **o DM não morre mais inteiro com resposta não-JSON** — na abertura da thread (`criar_thread`), quando o IG devolvia corpo não-vazio porém **não-JSON** (HTML/erro, assinatura de soft-block), o parse levantava exceção e derrubava o run todo (`erro inesperado — parando o run: Expecting value...`, morria na 2ª/3ª pessoa); agora trata igual corpo vazio e **pula a pessoa**, deixando o run seguir pras próximas
+
 ## [1.2.1] — 2026-09-17
 
 ### Corrigido
